@@ -1,22 +1,25 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-class Chromosome {
+class Chromosome implements Comparable<Chromosome> {
 
     /**
      * The list of cities, which are the genes of this chromosome.
      */
-    protected int[] cityList;
+    public int[] cityList;
 
     /**
      * The cost of following the cityList order of this chromosome.
      */
-    protected double cost;
+    public double cost;
+
+    public City[] cities;
 
     /**
      * @param cities The order that this chromosome would visit the cities.
      */
     Chromosome(City[] cities) {
+    	this.cities = cities;
         Random generator = new Random();
         cityList = new int[cities.length];
         //cities are visited based on the order of an integer representation [o,n] of each of the n cities.
@@ -37,11 +40,29 @@ class Chromosome {
     }
 
     /**
+     * Copy constructor
+     * @param c The Chromosome object to copy
+     */
+    Chromosome(Chromosome c) {
+    	cities = c.cities.clone();
+		cityList = c.cityList.clone();
+		cost = c.getCost();
+    }
+
+    /**
      * Calculate the cost of the specified list of cities.
      *
      * @param cities A list of cities.
      */
     void calculateCost(City[] cities) {
+        cost = 0;
+        for (int i = 0; i < cityList.length - 1; i++) {
+            double dist = cities[cityList[i]].proximity(cities[cityList[i + 1]]);
+            cost += dist;
+        }
+    }
+
+    void calculateCost() {
         cost = 0;
         for (int i = 0; i < cityList.length - 1; i++) {
             double dist = cities[cityList[i]].proximity(cities[cityList[i + 1]]);
@@ -92,7 +113,7 @@ class Chromosome {
      * @param chromosomes An array of chromosomes to sort.
      * @param num         How much of the chromosome list to sort.
      */
-    public static void sortChromosomes(Chromosome chromosomes[], int num) {
+    public static void sortChromosomes(Chromosome[] chromosomes, int num) {
         Chromosome ctemp;
         boolean swapped = true;
         while (swapped) {
@@ -107,4 +128,33 @@ class Chromosome {
             }
         }
     }
+
+	public static void shuffleChromosomes(Chromosome[] c) {
+		Random rand = new Random();
+		Chromosome tmp;
+		for (int i = c.length - 1; i > 0; i--) {
+			int index = rand.nextInt(i + 1);
+			tmp = c[index];
+			c[index] = c[i];
+			c[i] = tmp;
+		}
+	}
+
+	/**
+	 * Reveal the chromosome
+	 */
+	public String toString() {
+		String s = "";
+
+		for (int i: cityList) {
+			s += i + " ";
+		}
+
+		return  s;
+	}
+
+	@Override
+	public int compareTo(Chromosome c) {
+		return Double.compare(cost, c.cost);
+	}
 }
