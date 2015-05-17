@@ -42,7 +42,6 @@ public class Recombinator {
 		int c2pos = startPos;
 
 		for (int i=0; i<numCities; i++) {
-			System.out.println();
 			// Child 1 gets attributes from Parent 2
 			if (!contains(c1.cityList, p2.cityList[i], startPos)) {
 				c1.cityList[c1pos] = p2.cityList[i];

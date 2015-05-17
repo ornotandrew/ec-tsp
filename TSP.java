@@ -111,7 +111,6 @@ public class TSP {
 	}
 
 	public static void evolve() {
-		System.out.println();
 		Chromosome[] children = recombinator.recombinate(chromosomes);
 		chromosomes = selector.select(chromosomes, children);
 		mutator.mutate(chromosomes);
