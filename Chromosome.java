@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Random;
 
 class Chromosome implements Comparable<Chromosome> {
 
@@ -20,7 +19,6 @@ class Chromosome implements Comparable<Chromosome> {
      */
     Chromosome(City[] cities) {
     	this.cities = cities;
-        Random generator = new Random();
         cityList = new int[cities.length];
         //cities are visited based on the order of an integer representation [o,n] of each of the n cities.
         for (int x = 0; x < cities.length; x++) {
@@ -31,7 +29,7 @@ class Chromosome implements Comparable<Chromosome> {
         //shuffle the order so we have a random initial order
         for (int y = 0; y < cityList.length; y++) {
             int temp = cityList[y];
-            int randomNum = generator.nextInt(cityList.length);
+            int randomNum = TSP.random.nextInt(cityList.length);
             cityList[y] = cityList[randomNum];
             cityList[randomNum] = temp;
         }
@@ -130,10 +128,9 @@ class Chromosome implements Comparable<Chromosome> {
     }
 
 	public static void shuffleChromosomes(Chromosome[] c) {
-		Random rand = new Random();
 		Chromosome tmp;
 		for (int i = c.length - 1; i > 0; i--) {
-			int index = rand.nextInt(i + 1);
+			int index = TSP.random.nextInt(i + 1);
 			tmp = c[index];
 			c[index] = c[i];
 			c[i] = tmp;

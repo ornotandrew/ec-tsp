@@ -1,41 +1,36 @@
-import java.util.Random;
+import java.util.HashSet;
 
 public class Recombinator {
-	Random random;
 	Chromosome[] childPair;
 
 	public Recombinator() {
-		random = new Random();
 		childPair = new Chromosome[2];
 	}
 
-	public Chromosome[] recombinate(Chromosome[] clist) {
-		return consecCross(clist);
-	}
-
-	public Chromosome[] consecCross(Chromosome[] clist) {
-		// Make children with each pair of consecutive parents
-		Chromosome[] children = new Chromosome[clist.length];
-
-		for (int i=0; i<clist.length; i+=2) {
-			Chromosome[] kids = noDuplicate(clist[i], clist[i+1]);
-			children[i] = kids[0];
-			children[i+1] = kids[1];
-		}
-
-		return children;
+	public Chromosome[] recombinate(Chromosome a, Chromosome b) {
+		return cutCrossFill(a, b);
 	}
 
 	// 8 Queens type
-	public Chromosome[] noDuplicate(Chromosome p1, Chromosome p2) {
+	public Chromosome[] cutCrossFill(Chromosome p1, Chromosome p2) {
 		// Number of cities is the same in each genotype
 		int numCities = p1.cityList.length;
 
 		Chromosome c1 = new Chromosome(p1);
 		Chromosome c2 = new Chromosome(p2);
 
+
 		int crossoverLen = numCities/2 - 1;
 		int startPos = numCities - crossoverLen;
+
+		// Keep track of what's in the first section
+		HashSet<Integer> c1CheckList = new HashSet<Integer>();
+		HashSet<Integer> c2CheckList = new HashSet<Integer>();
+
+		for (int i=0; i<startPos; i++) {
+			c1CheckList.add(c1.cityList[i]);
+			c2CheckList.add(c2.cityList[i]);
+		}
 		
 		// Crossover
 		int c1pos = startPos;
@@ -43,13 +38,13 @@ public class Recombinator {
 
 		for (int i=0; i<numCities; i++) {
 			// Child 1 gets attributes from Parent 2
-			if (!contains(c1.cityList, p2.cityList[i], startPos)) {
+			if (!c1CheckList.contains(p2.cityList[i])) {
 				c1.cityList[c1pos] = p2.cityList[i];
 				c1pos++;
 			}
 
 			// Child 2 gets attributes from Parent 1
-			if (!contains(c2.cityList, p1.cityList[i], startPos)) {
+			if (!c2CheckList.contains(p1.cityList[i])) {
 				c2.cityList[c2pos] = p1.cityList[i];
 				c2pos++;
 			}
@@ -63,16 +58,6 @@ public class Recombinator {
 		childPair[1] = c2;
 
 		return childPair;
-	}
-
-	// Check if an element is in the first n elements of an array
-	public boolean contains(int[] arr, int elem, int n) {
-		for (int i=0; i<n; i++) {
-			if (arr[i]==elem){
-				return true;
-			}
-		}
-		return false;
 	}
 }
 

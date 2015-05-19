@@ -2,28 +2,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Selector {
-	
-	public Chromosome[] select(Chromosome[] p, Chromosome[] c) {
-		return elitist(p, c);
+
+	public Chromosome[] select(Chromosome[] p) {
+		Chromosome.shuffleChromosomes(p);
+		Chromosome[] winners = tournament(p, p.length/10);
+		Chromosome.shuffleChromosomes(winners);
+		Chromosome[] c = randomCross(winners);
+		TSP.mutator.mutate(c);
+		return c;
 	}
 
-	// Choose best candidates from children and parents
-	public Chromosome[] elitist(Chromosome[] p, Chromosome[] c) {
-		Chromosome[] all = new Chromosome[p.length*2];
+	public Chromosome[] randomCross(Chromosome[] clist) {
+		Chromosome[] children = new Chromosome[500];
 
-		for (int i=0; i<p.length; i++) {
-			all[i] = p[i];
-			all[i+p.length] = c[i];
+		Chromosome[] childPair;
+		int a, b;
+
+		for (int i=0; i<500; i++) {
+			// Randomly choose parents, make 2 children
+			// then add the fittest one
+			a = TSP.random.nextInt(clist.length);	
+			b = TSP.random.nextInt(clist.length);	
+			childPair = TSP.recombinator.recombinate(clist[a], clist[b]);
+
+			if (childPair[0].cost < childPair[1].cost)
+				children[i] = childPair[0];
+			else
+				children[i] = childPair[1];
 		}
 
-		Arrays.sort(all);
-		Chromosome[] elite = new Chromosome[p.length];
+		return children;
+	}
 
-		for (int i=0; i<p.length; i++) {
-			elite[i] = all[i];
+	// Tournament
+	public Chromosome[] tournament(Chromosome[] clist, int numSets) {
+		int setSize = clist.length/numSets;
+		int resultLen = (int) Math.ceil(clist.length/(double) setSize);
+		Chromosome[] results = new Chromosome[resultLen];
+
+		for (int i=0; i<clist.length; i+=setSize) {
+			// add the best chromosome in each range
+			Chromosome best = clist[i];
+			for (int j=1; j<setSize; j++) {
+				if (i+j>=clist.length)
+					break;
+				else if (clist[i+j].cost < best.cost)
+					best = clist[i+j];
+			}
+			results[i/setSize] = best;
 		}
 
-		return elite;
+		return results;
 	}
 
 }

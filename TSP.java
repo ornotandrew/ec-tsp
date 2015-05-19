@@ -80,6 +80,7 @@ public class TSP {
 	public static Recombinator recombinator;
 	public static Mutator mutator;
 	public static Selector selector;
+	public static Random random;
 
 
 	/*
@@ -111,8 +112,7 @@ public class TSP {
 	}
 
 	public static void evolve() {
-		Chromosome[] children = recombinator.recombinate(chromosomes);
-		chromosomes = selector.select(chromosomes, children);
+		chromosomes = selector.select(chromosomes);
 		mutator.mutate(chromosomes);
 	}
 
@@ -163,6 +163,7 @@ public class TSP {
 		recombinator = new Recombinator();
 		mutator = new Mutator();
 		selector = new Selector();
+		random = new Random();
 
 		int runs;
 		boolean display = false;
