@@ -236,7 +236,7 @@ public class TSP {
 						evolve();
 						generation++;
 
-						Chromosome.sortChromosomes(chromosomes, populationSize);
+						Arrays.sort(chromosomes);
 						double cost = chromosomes[0].getCost();
 						thisCost = cost;
 

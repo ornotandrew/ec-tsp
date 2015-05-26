@@ -1,8 +1,8 @@
 import java.util.Random;
 
 public class Mutator {
-	public double pSwap = 0.8;
-	public double pInvert = 0.6;
+	public double pSwap = 0.3;
+	public double pInvert = 0.3;
 
 	public void mutate(Chromosome[] clist) {
 		for (Chromosome c: clist) {
@@ -15,7 +15,7 @@ public class Mutator {
 		invert(c);
 		c.calculateCost();
 	}
-
+	
 	public void swap(Chromosome c) {
 		double roll = TSP.random.nextDouble();
 		if (roll<=pSwap) {
